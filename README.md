@@ -1,233 +1,171 @@
-# Projet
+ RAID Technology: Redundant Array of Independent Disks
 
+This project provides an in-depth overview of RAID technology. It explains key concepts, historical background, various RAID levels and configurations, and includes a practical demonstration of setting up RAID under Ubuntu using VirtualBox.
 
+## Table of Contents
+- [Introduction](#introduction)
+- [Présentation Générale du RAID](#présentation-générale-du-raid)
+  - [Définition et Historique](#définition-et-historique)
+  - [Besoins et Avantages du RAID](#besoins-et-avantages-du-raid)
+- [Les Différents Niveaux et Configurations du RAID](#les-différents-niveaux-et-configurations-du-raid)
+  - [RAID 0 – Striping](#raid-0--striping)
+  - [RAID 1 – Mirroring](#raid-1--mirroring)
+  - [Comparaison : RAID 0 vs RAID 1](#comparaison--raid-0-vs-raid-1)
+  - [RAID 5 – Striping avec Parité](#raid-5--striping-avec-parité)
+  - [RAID 6 – Striping avec Double Parité](#raid-6--striping-avec-double-parité)
+  - [Comparaison : RAID 5 vs RAID 6](#comparaison--raid-5-vs-raid-6)
+  - [RAID 50 et RAID 60 – Configurations Hybrides](#raid-50-et-raid-60--configurations-hybrides)
+  - [RAID 10 – Mirroring + Striping](#raid-10--mirroring--striping)
+- [Démonstration Pratique : Mise en Place d’un RAID via VirtualBox sous Ubuntu](#démonstration-pratique--mise-en-place-dun-raid-via-virtualbox-sous-ubuntu)
+  - [Étape 1 : Ajout de Disques Virtuels](#étape-1--ajout-de-disques-virtuels)
+  - [Étape 2 : Vérification des Disques](#étape-2--vérification-des-disques)
+  - [Étape 3 : Installation de mdadm](#étape-3--installation-de-mdadm)
+  - [Étape 4 : Création de l’Ensemble RAID](#étape-4--création-de-lensemble-raid)
+  - [Étape 5 : Formatage et Montage du RAID](#étape-5--formatage-et-montage-du-raid)
+  - [Étape 6 : Configuration du Montage Automatique](#étape-6--configuration-du-montage-automatique)
+  - [Étape 7 : Simulation d’une Défaillance de Disque](#étape-7--simulation-dune-défaillance-de-disque)
+  - [Étape 8 : Récupération et Reconstruction du RAID](#étape-8--récupération-et-reconstruction-du-raid)
+- [Conclusion](#conclusion)
 
-**Encadré par :** Professeur MIHI SOUKAINA
-
-[a4paper,12pt]{article}
----
-[utf8]{inputenc}
-[french]{babel}
 ---
 
-{0pt}
----
+## Introduction
+This README provides detailed information about RAID technology, covering definitions, benefits, and various configuration levels. RAID (Redundant Array of Independent Disks) is designed to overcome the limitations of individual hard drives by improving performance, enhancing data security through redundancy, and increasing total storage capacity by aggregating multiple storage devices.
 
-     % Vertical spacing at top (starred version for page top)
 ---
-     % Horizontal centering
-    (Redundant Array of Independent Disks)****}
----
-    
-    
----
-    {****
-    El Bessali Wahib \\
----
-    Mouine Aya \\
-    Zaynab Zidane \\
----
-    Bouissoufar Maryrm \\
-    ****}
----
-    
-    
----
-    {****
-    
----
-     % Vertical spacing at bottom
-
-Dans ce rapport, on présente de manière détaillée la technologie RAID. On y expose l'ensemble des définitions, explications, descriptions et comparaisons relatives à cette méthode (Redundant Array of Independent Disks). Conçue pour pallier les limites des disques durs individuels, la technologie RAID permet d’améliorer les performances, de renforcer la sécurité des données et d’augmenter la capacité de stockage grâce à la redondance et au regroupement de plusieurs supports de stockage.
 
 ## Présentation Générale du RAID
 
 ### Définition et Historique
-Le RAID, ou Regroupement Redondant de Disques Indépendants, a été développé en 1987 par David Patterson, Garth Gibson et Randy Katz à l’Université de Californie à Berkeley. Cette technologie permet de combiner plusieurs disques durs (ou SSD) en une unité logique unique afin de :
----
-[label={--}]
-    - Renforcer la sécurité des données grâce à la redondance,
----
-    - Augmenter la capacité de stockage.
+RAID — originally known as *Regroupement Redondant de Disques Indépendants* — was developed in 1987 at the University of California, Berkeley by David Patterson, Garth Gibson, and Randy Katz. The main purposes of RAID are to:
+- Enhance performance (faster read/write speeds)
+- Increase data security through redundancy
+- Expand storage capacity by combining multiple devices
 
-Le RAID répond aux besoins essentiels suivants :
-    - **Redondance des données :** La duplication ou la reconstruction des données sur plusieurs disques garantit leur disponibilité en cas de panne.
----
-    - **Amélioration des performances :** L’utilisation simultanée de plusieurs disques (striping) permet d'accélérer les lectures et écritures.
-    - **Capacité accrue :** Le regroupement de plusieurs disques permet d’obtenir un volume logique de grande taille facilitant l'extension du stockage.
+### Besoins et Avantages du RAID
+RAID addresses several critical needs:
+- **Redondance des données**: Duplicate or reconstruct data across multiple disks.
+- **Amélioration des performances**: Simultaneous use of multiple disks (striping) increases read/write speeds.
+- **Tolérance aux pannes**: Maintain functionality even if some disks fail.
+- **Capacité accrue**: Combine disks to create large logical volumes.
+
 ---
 
 ## Les Différents Niveaux et Configurations du RAID
-On décrit ici les différents niveaux de RAID ainsi que leurs caractéristiques.
----
 
 ### RAID 0 – Striping
----
+**Définition et Fonctionnement**  
+Data is split into blocks and distributed across multiple disks (e.g., a 64 KB block divided among several drives).  
 
-#### Définition et Fonctionnement
----
+**Avantages**  
+- Performances accrues (accelerated read/write speeds)  
+- Utilisation totale de la capacité (no parity overhead)  
 
-#### Avantages
-[label={--}]
----
-    - **Performances accrues :** Accélération des vitesses de lecture et d’écriture.
-    - **Utilisation totale de la capacité :** Aucun espace n'est perdu pour la parité.
----
+**Limites**  
+- Absence de tolérance aux pannes (single disk failure = total data loss)  
 
-#### Limites
----
+### RAID 1 – Mirroring
+**Définition et Fonctionnement**  
+Data is duplicated on at least two disks (every write operation is mirrored).  
 
-    - **Absence de tolérance aux pannes :** La défaillance d’un disque entraîne la perte totale des données.
----
-    - **Risque accru :** La répartition sur plusieurs disques augmente la probabilité de défaillance.
+**Avantages**  
+- Haute sécurité (data remains available if one disk fails)  
 
-Le RAID 1 s’appuie sur la technique du **mirroring** : les données sont copiées sur au moins deux disques. Chaque opération d’écriture est ainsi dupliquée, garantissant une redondance complète.
-#### Avantages
----
-
-    - **Haute sécurité :** Les données demeurent disponibles même en cas de défaillance d’un disque.
----
-    - **Tolérance aux pannes :** Le disque en miroir prend le relais en cas de panne.
-
-#### Limites
-[label={--}]
----
-    - **Coût élevé :** Nécessite l'achat de disques supplémentaires (capacité utile réduite de moitié).
+**Limites**  
+- Coût élevé (50% usable capacity)  
 
 ### Comparaison : RAID 0 vs RAID 1
----
-
-    - **Opération principale :** RAID 0 utilise le striping tandis que RAID 1 mise sur le mirroring.
----
-    - **Coût et capacité :** RAID 0 offre 100\% de capacité utilisable, contre 50\% pour RAID 1.
+| Caractéristique        | RAID 0              | RAID 1              |
+|------------------------|---------------------|---------------------|
+| Opération principale   | Striping            | Mirroring           |
+| Capacité utilisable    | 100%                | 50%                 |
+| Tolérance aux pannes   | Non                 | Oui                 |
 
 ### RAID 5 – Striping avec Parité
----
+**Définition et Fonctionnement**  
+Combines striping with parity (data blocks + parity spread across ≥3 disks).  
 
-#### Définition et Fonctionnement
----
+**Avantages**  
+- Tolérance aux pannes (survives one disk failure)  
 
-#### Avantages et Limites
-[label={--}]
----
-    - **Tolérance aux pannes :** Peut supporter la défaillance d’un disque.
-    - **Limite :** En cas d'échec de deux disques simultanément, la récupération des données est impossible.
----
+**Limites**  
+- Impossible recovery if two disks fail.  
 
 ### RAID 6 – Striping avec Double Parité
+**Définition et Fonctionnement**  
+Uses double parity (survives two simultaneous disk failures).  
 
-#### Définition et Fonctionnement
-Le RAID 6 est une évolution du RAID 5 qui ajoute une seconde parité. Ce mécanisme double permet au système de supporter la défaillance simultanée de deux disques.
----
+**Avantages**  
+- Tolérance améliorée (two disk failures)  
 
-[label={--}]
-    - **Performance d'écriture :** Légèrement inférieure à celle du RAID 5 en raison du calcul supplémentaire de la parité.
----
-    - **Coût :** Nécessite un minimum de quatre disques, ce qui augmente le coût.
+**Limites**  
+- Coût élevé (minimum four disks).  
 
-  { | l | l | l | }
-**Caractéristique**            & **RAID 5** & **RAID 6** \\ 
----
-Nombre minimal de disques           & 3              & 4               \\ 
-Tolérance aux pannes                & 1 disque       & 2 disques       \\ 
----
-Performances d'écriture             & Plus rapide    & Un peu plus lent\\ 
+### Comparaison : RAID 5 vs RAID 6
+| Caractéristique        | RAID 5              | RAID 6              |
+|------------------------|---------------------|---------------------|
+| Disques minimum        | 3                   | 4                   |
+| Parité                 | Simple              | Double              |
+| Performances écriture  | Plus rapide         | Légèrement plus lent|
 
 ### RAID 50 et RAID 60 – Configurations Hybrides
----
+**RAID 50**: Combines RAID 5 groups with RAID 0 striping.  
+**Avantages**: Performance + fault tolerance.  
+**Inconvénients**: Complex configuration.  
 
-#### RAID 50
----
-
-Le RAID 50 combine plusieurs groupes RAID 5, chacun bénéficiant de la parité, qui sont ensuite agrégés en RAID 0 pour améliorer les performances globales.
----
-****agraph{Avantages et Inconvénients}
-    - **Avantages :**
----
-    [label={****$$}]
-        - Tolérance à la défaillance d’un disque par groupe.
----
-        - Capacité utile élevée.
-    - **Inconvénients :**
----
-    [label={****$$}]
-        - Configuration complexe.
----
-    
-
-****agraph{Définition et Fonctionnement}
-****agraph{Avantages et Inconvénients}
----
-[label={--}]
-    [label={****$$}]
----
-        - Excellente tolérance aux pannes grâce à la double parité.
-    
----
-    - **Inconvénients :**
-        - Capacité brute réduite, car deux disques par groupe sont utilisés pour la parité.
----
-        - Performances d’écriture légèrement inférieures.
-    
----
+**RAID 60**: Combines RAID 6 groups with RAID 0 striping.  
+**Avantages**: High fault tolerance.  
+**Inconvénients**: Reduced raw capacity.  
 
 ### RAID 10 – Mirroring + Striping
+**Définition et Fonctionnement**  
+Mirrors pairs of disks and stripes data across them.  
 
-#### Définition et Fonctionnement
-Le RAID 10 (ou RAID 1+0) combine le mirroring et le striping. On configure d’abord des paires de disques en miroir, puis on répartit les données entre ces paires pour obtenir à la fois sécurité et rapidité d’accès.
----
+**Avantages**  
+- Performance élevée + haute tolérance aux pannes  
 
-[label={--}]
-    - **Haute tolérance aux pannes :** Chaque paire peut tolérer la défaillance d’un disque.
----
-    - **Reconstruction rapide :** En cas de panne, le système reconstruit rapidement les données à partir des miroirs.
+**Limites**  
+- Coût élevé (50% usable capacity)  
 
-#### Limites
-[label={--}]
----
-    - **Coût élevé :** Nécessite le double de disques pour obtenir la capacité utile désirée.
-    - **Configuration complexe :** Demande une gestion rigoureuse de l'administration et de la surveillance.
 ---
 
 ## Démonstration Pratique : Mise en Place d’un RAID via VirtualBox sous Ubuntu
-Dans cette section, on décrit les huit étapes suivies pour mettre en place un environnement RAID à l'aide de VirtualBox et Ubuntu, accompagnées de captures d’écran.
----
 
 ### Étape 1 : Ajout de Disques Virtuels
----
+Add four virtual disks via VirtualBox settings.
 
-[width=0.8]{step1.png}
-
-**Description :** On a démarré la machine Ubuntu et utilisé une commande de liste des blocs pour vérifier que les nouveaux disques étaient reconnus par le système.\\
-[width=0.8]{step2.png}
----
-
-### Étape 3 : Installation de {mdadm
-**Description :** On a installé {mdadm}, l’outil indispensable pour créer et gérer des ensembles RAID sous Linux.\\
----
-
-### Étape 4 : Création de l’Ensemble RAID
----
-
-[width=0.8]{step4.png}
-
-**Description :** On a formaté l’ensemble RAID avec un système de fichiers approprié et monté le volume dans un répertoire pour faciliter l’accès aux données.\\
-[width=0.8]{step5.png}
----
-
-### Étape 6 : Configuration du Montage Automatique
-**Description :** On a modifié la configuration du système afin que l’ensemble RAID se monte automatiquement au démarrage de la machine.\\
----
-
-### Étape 7 : Simulation d’une Défaillance de Disque
----
-
-[width=0.8]{step7.png}
-
-**Description :** On a retiré le disque défaillant puis l’a réintégré dans l’ensemble RAID afin de reconstruire le volume et rétablir son intégrité.\\
-[width=0.8]{step8.png}
----
-
-## Conclusion
-Ce rapport présente en détail la technologie RAID, en décrivant ses différents niveaux et en démontrant, étape par étape, son implémentation pratique via VirtualBox sous Ubuntu. Ce projet de groupe permet de mieux comprendre les avantages et les compromis de chaque configuration RAID ainsi que les aspects pratiques liés à leur mise en œuvre. Nous espérons que ce travail contribuera à une compréhension approfondie de cette technologie.
----
+### Étape 2 : Vérification des Disques
+```bash
+lsblk
+sudo fdisk -l
+Étape 3 : Installation de mdadm
+bash
+Copy
+sudo apt-get update
+sudo apt-get install mdadm -y
+Étape 4 : Création de l’Ensemble RAID
+bash
+Copy
+sudo mdadm --create /dev/md0 --level=10 --raid-devices=4 /dev/sdb /dev/sdc /dev/sdd /dev/sde
+Étape 5 : Formatage et Montage du RAID
+bash
+Copy
+sudo mkfs.ext4 /dev/md0
+sudo mkdir -p /mnt/raid
+sudo mount /dev/md0 /mnt/raid
+Étape 6 : Configuration du Montage Automatique
+bash
+Copy
+sudo blkid /dev/md0  # Get UUID
+sudo nano /etc/fstab  # Add: UUID=your-raid-uuid /mnt/raid ext4 defaults 0 0
+Étape 7 : Simulation d’une Défaillance de Disque
+bash
+Copy
+sudo mdadm --fail /dev/md0 /dev/sdb
+Étape 8 : Récupération et Reconstruction du RAID
+bash
+Copy
+sudo mdadm --remove /dev/md0 /dev/sdb
+sudo mdadm --add /dev/md0 /dev/sdb
+Conclusion
+This guide covers RAID technology, including configurations (RAID 0, 1, 5, 6, 10, 50/60) and a practical setup on Ubuntu. RAID balances performance, redundancy, and capacity—ideal for diverse storage needs.
