@@ -124,14 +124,34 @@ Le RAID a été développé en 1987 à l’Université de Californie à Berkeley
 
 ## Démonstration Pratique : RAID via VirtualBox sous Ubuntu
 ### Étapes :
-1. **Ajout de Disques Virtuels** : Ajout de 4 disques dans VirtualBox ``` lsblk ```
-2. **Vérification des Disques** : Liste des blocs sous Ubuntu *(step2.png)*
-3. **Installation de mdadm** : Outil RAID pour Linux *(step3.png)*
-4. **Création de RAID 10** : Utilisation des 4 disques *(step4.png)*
-5. **Formatage et Montage** : Formatage et montage dans un dossier *(step5.png)*
-6. **Montage Automatique** : Configuration pour montage au démarrage *(step6.png)*
-7. **Simulation de Défaillance** : Retrait d’un disque *(step7.png)*
-8. **Réintégration** : Récupération du RAID après ajout du disque *(step8.png)*
+1. **Ajout de Disques Virtuels** : Ajout de 4 disques dans VirtualBox 
+2. **Vérification des Disques** : Liste des blocs sous Ubuntu
+``` lsblk ```
+3. **Installation de mdadm** : Outil RAID pour Linux
+``` sudo apt install mdadm -y ```
+4. **Création de RAID 10** : Utilisation des 4 disques
+```
+sudo mdadm --create /dev/md0 --level=10 --raid-devices=4 /dev/sdb /dev/sdc /dev/sdd /dev/sde
+```
+5. **Formatage et Montage** : Formatage et montage dans un dossier
+```
+sudo mkfs.ext4 /dev/md0
+sudo mkdir /mnt/raid10
+sudo mount /dev/md0 /mnt/raid10
+```
+6. **Montage Automatique** : Configuration pour montage au démarrage
+```
+echo "/dev/md0 /mnt/raid10 ext4 defaults 0 0" | sudo tee -a /etc/fstab
+```
+7. **Simulation de Défaillance** : Retrait d’un disque
+```
+sudo mdadm --fail /dev/md0 /dev/sdb
+```
+8. **Réintégration** : Récupération du RAID après ajout du disque
+```
+sudo mdadm --remove /dev/md0 /dev/sdb
+sudo mdadm --add /dev/md0 /dev/sdb
+```
 
 ## Conclusion
 Ce rapport présente en détail la technologie RAID, ses différents niveaux, et une démonstration pratique via VirtualBox sous Ubuntu. Il permet de mieux appréhender les choix techniques possibles selon les besoins en performance, sécurité et coûts.
