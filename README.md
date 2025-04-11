@@ -124,7 +124,7 @@ Le RAID a été développé en 1987 à l’Université de Californie à Berkeley
 
 ## Démonstration Pratique : RAID via VirtualBox sous Ubuntu
 ### Étapes :
-1. **Ajout de Disques Virtuels** : Ajout de 4 disques dans VirtualBox *(step1.png)*
+1. **Ajout de Disques Virtuels** : Ajout de 4 disques dans VirtualBox ``` lsblk ```
 2. **Vérification des Disques** : Liste des blocs sous Ubuntu *(step2.png)*
 3. **Installation de mdadm** : Outil RAID pour Linux *(step3.png)*
 4. **Création de RAID 10** : Utilisation des 4 disques *(step4.png)*
@@ -135,3 +135,4 @@ Le RAID a été développé en 1987 à l’Université de Californie à Berkeley
 
 ## Conclusion
 Ce rapport présente en détail la technologie RAID, ses différents niveaux, et une démonstration pratique via VirtualBox sous Ubuntu. Il permet de mieux appréhender les choix techniques possibles selon les besoins en performance, sécurité et coûts.
+
