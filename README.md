@@ -126,10 +126,14 @@ Le RAID a été développé en 1987 à l’Université de Californie à Berkeley
 ### Étapes :
 1. **Ajout de Disques Virtuels** : Ajout de 4 disques dans VirtualBox 
 2. **Vérification des Disques** : Liste des blocs sous Ubuntu
-``` lsblk ```
-3. **Installation de mdadm** : Outil RAID pour Linux
-``` sudo apt install mdadm -y ```
-4. **Création de RAID 10** : Utilisation des 4 disques
+```
+lsblk
+ ```
+4. **Installation de mdadm** : Outil RAID pour Linux
+```
+sudo apt install mdadm -y
+```
+6. **Création de RAID 10** : Utilisation des 4 disques
 ```
 sudo mdadm --create /dev/md0 --level=10 --raid-devices=4 /dev/sdb /dev/sdc /dev/sdd /dev/sde
 ```
